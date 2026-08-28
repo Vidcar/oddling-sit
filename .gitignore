@@ -11,3 +11,6 @@ build/
 .godot/
 .DS_Store
 Thumbs.db
+.worktrees/
+logs/
+runs/
