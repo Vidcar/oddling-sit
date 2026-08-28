@@ -61,7 +61,7 @@ class LiveEnvCfg(DirectRLEnvCfg):
     rew_eat: float = 25.0
     rew_alive: float = 0.0
     rew_approach: float = 2.5
-    rew_upright: float = 0.005
+    rew_upright: float = 0.0
     rew_dead: float = -2.0
 
     def __post_init__(self):
