@@ -10,7 +10,7 @@ from isaaclab import cloner
 from isaaclab.assets import Articulation, RigidObject
 from isaaclab.envs import DirectRLEnv
 from isaaclab.sim.spawners.from_files import GroundPlaneCfg, spawn_ground_plane
-from isaaclab.utils.math import quat_apply
+from isaaclab.utils.math import quat_apply, quat_from_euler_xyz
 
 from oddling.live import DRAIN, EAT_ENERGY, EAT_LOCK, EAT_RADIUS, FOOD_CLEAR, START_ENERGY
 
@@ -157,9 +157,17 @@ class LiveEnv(DirectRLEnv):
         self._reset_body(env_ids)
 
     def _reset_body(self, env_ids: torch.Tensor) -> None:
+        n = env_ids.shape[0]
         joint_pos = self.robot.data.default_joint_pos.torch[env_ids].clone()
+        joint_pos += 0.08 * (2.0 * torch.rand_like(joint_pos) - 1.0)
         joint_vel = self.robot.data.default_joint_vel.torch[env_ids].clone()
         root_pose = self.robot.data.default_root_pose.torch[env_ids].clone()
+        yaw = 0.4 * (2.0 * torch.rand(n, device=self.device) - 1.0)
+        root_pose[:, 3:7] = quat_from_euler_xyz(
+            torch.zeros(n, device=self.device),
+            torch.zeros(n, device=self.device),
+            yaw,
+        )
         root_pose[:, :3] += self.scene.env_origins[env_ids]
         root_vel = self.robot.data.default_root_vel.torch[env_ids].clone()
         self.robot.write_root_pose_to_sim_index(root_pose=root_pose, env_ids=env_ids)

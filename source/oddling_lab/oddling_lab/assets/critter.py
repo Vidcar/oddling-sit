@@ -28,7 +28,13 @@ CRITTER_CFG = ArticulationCfg(
             stabilization_threshold=0.001,
         ),
     ),
-    init_state=ArticulationCfg.InitialStateCfg(pos=(0.0, 0.0, 0.35)),
+    init_state=ArticulationCfg.InitialStateCfg(
+        pos=(0.0, 0.0, 0.32),
+        joint_pos={
+            ".*_hip": 0.2,
+            ".*_knee": -0.7,
+        },
+    ),
     actuators={
         "legs": ImplicitActuatorCfg(
             joint_names_expr=[".*"],
