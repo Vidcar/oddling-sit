@@ -3,11 +3,11 @@ from __future__ import annotations
 from oddling.live import (
     DRAIN,
     EAT_ENERGY,
+    FOOD_CLEAR,
     FOOD_HOME,
-    FOOD_JITTER_X,
-    FOOD_JITTER_Y,
     START_ENERGY,
     LiveState,
+    mouth_reaches,
     step_live,
 )
 
@@ -20,16 +20,18 @@ def test_energy_drains_without_eat() -> None:
     assert nxt.collapsed is False
 
 
-def test_mouth_on_food_eats_and_food_moves() -> None:
+def test_mouth_on_food_eats_and_food_moves_out_of_reach() -> None:
     st = LiveState.spawn()
-    nxt = step_live(st, mouth_xyz=FOOD_HOME, ate=True)
+    mouth = (0.22, 0.0, 0.35)
+    nxt = step_live(st, mouth_xyz=mouth, ate=True)
     assert nxt.energy == START_ENERGY - DRAIN + EAT_ENERGY
     assert nxt.eats == 1
     assert nxt.food != FOOD_HOME
-    dx = abs(nxt.food[0] - FOOD_HOME[0])
-    dy = abs(nxt.food[1] - FOOD_HOME[1])
-    assert dx <= FOOD_JITTER_X + 1e-5
-    assert dy <= FOOD_JITTER_Y + 1e-5
+    assert not mouth_reaches(mouth, nxt.food)
+    dx = nxt.food[0] - mouth[0]
+    dy = nxt.food[1] - mouth[1]
+    dist = (dx * dx + dy * dy) ** 0.5
+    assert dist >= FOOD_CLEAR - 1e-5
 
 
 def test_starve_collapses_then_same_run_continues() -> None:

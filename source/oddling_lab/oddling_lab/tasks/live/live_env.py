@@ -12,7 +12,7 @@ from isaaclab.envs import DirectRLEnv
 from isaaclab.sim.spawners.from_files import GroundPlaneCfg, spawn_ground_plane
 from isaaclab.utils.math import quat_apply
 
-from oddling.live import COLLAPSE_STEPS, DRAIN, EAT_ENERGY, EAT_RADIUS, START_ENERGY
+from oddling.live import COLLAPSE_STEPS, DRAIN, EAT_ENERGY, EAT_LOCK, EAT_RADIUS, FOOD_CLEAR, START_ENERGY
 
 if TYPE_CHECKING:
     from oddling_lab.tasks.live.live_env_cfg import LiveEnvCfg
@@ -35,6 +35,7 @@ class LiveEnv(DirectRLEnv):
         self.food_pos = torch.zeros((n, 3), device=device)
         self.food_pos[:] = torch.tensor(self.cfg.food_home, device=device)
         self.prev_dist = torch.full((n,), -1.0, device=device)
+        self.eat_lock = torch.zeros(n, dtype=torch.int32, device=device)
         self._mouth_ids, _ = self.robot.find_bodies("mouth.*")
         if len(self._mouth_ids) == 0:
             self._mouth_ids, _ = self.robot.find_bodies("torso")
@@ -79,12 +80,12 @@ class LiveEnv(DirectRLEnv):
 
     def _jitter_food(self, env_ids: torch.Tensor) -> None:
         n = env_ids.shape[0]
-        ux = torch.rand(n, device=self.device) * self.cfg.food_jitter_x
-        uy = (torch.rand(n, device=self.device) * 2.0 - 1.0) * self.cfg.food_jitter_y
-        home = torch.tensor(self.cfg.food_home, device=self.device)
-        self.food_pos[env_ids, 0] = home[0] + ux
-        self.food_pos[env_ids, 1] = home[1] + uy
-        self.food_pos[env_ids, 2] = home[2]
+        mouth = self._mouth_world()[env_ids] - self.scene.env_origins[env_ids]
+        dist = FOOD_CLEAR + torch.rand(n, device=self.device) * self.cfg.food_jitter_x
+        ang = (torch.rand(n, device=self.device) - 0.5) * 1.2
+        self.food_pos[env_ids, 0] = mouth[:, 0] + dist * torch.cos(ang)
+        self.food_pos[env_ids, 1] = mouth[:, 1] + dist * torch.sin(ang)
+        self.food_pos[env_ids, 2] = 0.12
 
     def _get_observations(self) -> dict:
         jp = self.robot.data.joint_pos.torch
@@ -111,7 +112,9 @@ class LiveEnv(DirectRLEnv):
         mouth = self._mouth_world()
         food_w = self.food_pos + self.scene.env_origins
         dist = torch.linalg.norm(mouth - food_w, dim=-1)
-        ate = (dist < EAT_RADIUS) & (~self.collapsed)
+        ate = (dist < EAT_RADIUS) & (~self.collapsed) & (self.eat_lock <= 0)
+        self.eat_lock = torch.where(self.eat_lock > 0, self.eat_lock - 1, self.eat_lock)
+        self.eat_lock = torch.where(ate, torch.full_like(self.eat_lock, EAT_LOCK), self.eat_lock)
         finishing = (self.collapsed) & (self.collapse_left <= 1)
 
         self.energy = torch.where(self.collapsed, self.energy, self.energy - DRAIN + ate.float() * EAT_ENERGY)
@@ -158,6 +161,7 @@ class LiveEnv(DirectRLEnv):
         self.collapsed[env_ids] = False
         self.collapse_left[env_ids] = 0
         self.prev_dist[env_ids] = -1.0
+        self.eat_lock[env_ids] = 0
         home = torch.tensor(self.cfg.food_home, device=self.device)
         self.food_pos[env_ids] = home
         self._write_food(env_ids)

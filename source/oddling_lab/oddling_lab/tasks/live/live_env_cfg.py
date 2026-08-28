@@ -55,8 +55,8 @@ class LiveEnvCfg(DirectRLEnvCfg):
     robot = CRITTER_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
     food = FOOD_CFG.replace(prim_path="{ENV_REGEX_NS}/Food")
     food_home: tuple[float, float, float] = FOOD_HOME
-    food_jitter_x: float = 0.25
-    food_jitter_y: float = 0.20
+    food_jitter_x: float = 0.35
+    food_jitter_y: float = 0.35
 
     rew_eat: float = 20.0
     rew_alive: float = 0.01

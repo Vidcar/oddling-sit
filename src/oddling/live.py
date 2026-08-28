@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 START_ENERGY = 72.0
 DRAIN = 0.02
-EAT_RADIUS = 0.50
+EAT_RADIUS = 0.32
 EAT_ENERGY = 12.0
-FOOD_HOME = (0.55, 0.0, 0.12)
-FOOD_JITTER_X = 0.25
-FOOD_JITTER_Y = 0.20
+FOOD_HOME = (1.05, 0.0, 0.12)
+FOOD_CLEAR = 0.70
+FOOD_JITTER_X = 0.35
+FOOD_JITTER_Y = 0.35
+EAT_LOCK = 30
 COLLAPSE_STEPS = 24
 
 
@@ -33,12 +36,15 @@ class LiveState:
         return cls(energy=START_ENERGY, eats=0, food=FOOD_HOME, collapsed=False, collapse_left=0, rng=1)
 
 
-def _jitter(rng: int) -> tuple[tuple[float, float, float], int]:
+def _jitter(rng: int, mouth_xyz: tuple[float, float, float]) -> tuple[tuple[float, float, float], int]:
+    """Place food in front of the mouth, always outside the eat bubble."""
     rng = (1103515245 * rng + 12345) & 0x7FFFFFFF
-    ux = (rng % 1000) / 1000.0 * FOOD_JITTER_X
+    dist = FOOD_CLEAR + (rng % 1000) / 1000.0 * FOOD_JITTER_X
     rng = (1103515245 * rng + 12345) & 0x7FFFFFFF
-    uy = ((rng % 1000) / 1000.0 * 2.0 - 1.0) * FOOD_JITTER_Y
-    return (FOOD_HOME[0] + ux, FOOD_HOME[1] + uy, FOOD_HOME[2]), rng
+    ang = ((rng % 1000) / 1000.0 - 0.5) * 1.2
+    x = mouth_xyz[0] + dist * math.cos(ang)
+    y = mouth_xyz[1] + dist * math.sin(ang)
+    return (x, y, FOOD_HOME[2]), rng
 
 
 def step_live(
@@ -65,7 +71,7 @@ def step_live(
     eats = st.eats + (1 if ate else 0)
     food, rng = st.food, st.rng
     if ate:
-        food, rng = _jitter(st.rng)
+        food, rng = _jitter(st.rng, mouth_xyz)
     if energy <= 0.0:
         return LiveState(0.0, eats, food, True, COLLAPSE_STEPS, rng)
     return LiveState(energy, eats, food, False, 0, rng)
