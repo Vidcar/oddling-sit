@@ -4,6 +4,8 @@ from oddling.live import (
     DRAIN,
     EAT_ENERGY,
     FOOD_HOME,
+    FOOD_JITTER_X,
+    FOOD_JITTER_Y,
     START_ENERGY,
     LiveState,
     step_live,
@@ -26,8 +28,8 @@ def test_mouth_on_food_eats_and_food_moves() -> None:
     assert nxt.food != FOOD_HOME
     dx = abs(nxt.food[0] - FOOD_HOME[0])
     dy = abs(nxt.food[1] - FOOD_HOME[1])
-    assert dx <= 0.8 + 1e-5
-    assert dy <= 0.5 + 1e-5
+    assert dx <= FOOD_JITTER_X + 1e-5
+    assert dy <= FOOD_JITTER_Y + 1e-5
 
 
 def test_starve_collapses_then_same_run_continues() -> None:

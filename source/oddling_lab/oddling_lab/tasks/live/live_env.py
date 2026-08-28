@@ -34,6 +34,7 @@ class LiveEnv(DirectRLEnv):
         self.collapse_left = torch.zeros(n, dtype=torch.int32, device=device)
         self.food_pos = torch.zeros((n, 3), device=device)
         self.food_pos[:] = torch.tensor(self.cfg.food_home, device=device)
+        self.prev_dist = torch.full((n,), -1.0, device=device)
         self._mouth_ids, _ = self.robot.find_bodies("mouth.*")
         if len(self._mouth_ids) == 0:
             self._mouth_ids, _ = self.robot.find_bodies("torso")
@@ -132,10 +133,13 @@ class LiveEnv(DirectRLEnv):
             ids = finishing.nonzero(as_tuple=False).squeeze(-1)
             self._reset_life(ids)
 
+        have_prev = self.prev_dist >= 0.0
+        approach = torch.where(have_prev, self.prev_dist - dist, torch.zeros_like(dist))
+        self.prev_dist = dist.detach()
         rew = (
             self.cfg.rew_eat * ate.float()
             + self.cfg.rew_alive * (~self.collapsed).float()
-            - self.cfg.rew_dist * dist.clamp(max=4.0) / 4.0
+            + self.cfg.rew_approach * approach
             + self.cfg.rew_dead * newly_dead.float()
         )
         self.extras.setdefault("log", {})
@@ -148,6 +152,7 @@ class LiveEnv(DirectRLEnv):
         self.eats[env_ids] = 0
         self.collapsed[env_ids] = False
         self.collapse_left[env_ids] = 0
+        self.prev_dist[env_ids] = -1.0
         home = torch.tensor(self.cfg.food_home, device=self.device)
         self.food_pos[env_ids] = home
         self._write_food(env_ids)

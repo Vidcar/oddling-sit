@@ -7,6 +7,7 @@ from isaaclab.actuators import ImplicitActuatorCfg
 from isaaclab.assets import ArticulationCfg, RigidObjectCfg
 
 import oddling
+from oddling.live import FOOD_HOME
 
 XML = Path(oddling.__file__).with_name("body.xml")
 
@@ -48,5 +49,5 @@ FOOD_CFG = RigidObjectCfg(
         collision_props=sim_utils.CollisionPropertiesCfg(collision_enabled=False),
         visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.82, 0.22, 0.18)),
     ),
-    init_state=RigidObjectCfg.InitialStateCfg(pos=(2.2, 0.0, 0.12)),
+    init_state=RigidObjectCfg.InitialStateCfg(pos=FOOD_HOME),
 )
