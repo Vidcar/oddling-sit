@@ -17,4 +17,5 @@ def test_four_leg_mouth() -> None:
     assert len(motors) == 8
     geoms = {g.get("name") for g in root.iter("geom")}
     assert "food" not in geoms
+    assert "floor" not in geoms
     assert root.find("./worldbody/body[@name='food']") is None

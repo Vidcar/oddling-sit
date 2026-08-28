@@ -27,7 +27,7 @@ CRITTER_CFG = ArticulationCfg(
             stabilization_threshold=0.001,
         ),
     ),
-    init_state=ArticulationCfg.InitialStateCfg(pos=(0.0, 0.0, 0.42)),
+    init_state=ArticulationCfg.InitialStateCfg(pos=(0.0, 0.0, 0.35)),
     actuators={
         "legs": ImplicitActuatorCfg(
             joint_names_expr=[".*"],
@@ -45,7 +45,7 @@ FOOD_CFG = RigidObjectCfg(
         radius=0.12,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(kinematic_enabled=True),
         mass_props=sim_utils.MassPropertiesCfg(mass=0.1),
-        collision_props=sim_utils.CollisionPropertiesCfg(),
+        collision_props=sim_utils.CollisionPropertiesCfg(collision_enabled=False),
         visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.82, 0.22, 0.18)),
     ),
     init_state=RigidObjectCfg.InitialStateCfg(pos=(2.2, 0.0, 0.12)),
