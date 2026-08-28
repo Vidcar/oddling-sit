@@ -39,7 +39,7 @@ class LivePhysicsCfg(PresetCfg):
 
 @configclass
 class LiveEnvCfg(DirectRLEnvCfg):
-    episode_length_s = 60.0
+    episode_length_s = 90.0
     decimation = 2
     action_scale = 1.0
     action_space = 8
@@ -55,12 +55,13 @@ class LiveEnvCfg(DirectRLEnvCfg):
     robot = CRITTER_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
     food = FOOD_CFG.replace(prim_path="{ENV_REGEX_NS}/Food")
     food_home: tuple[float, float, float] = FOOD_HOME
-    food_jitter_x: float = 0.4
-    food_jitter_y: float = 0.3
+    food_jitter_x: float = 0.25
+    food_jitter_y: float = 0.20
 
     rew_eat: float = 20.0
     rew_alive: float = 0.01
-    rew_approach: float = 1.0
+    rew_approach: float = 1.5
+    rew_upright: float = 0.05
     rew_dead: float = -1.0
 
     def __post_init__(self):

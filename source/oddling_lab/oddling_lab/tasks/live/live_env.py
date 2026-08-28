@@ -136,10 +136,15 @@ class LiveEnv(DirectRLEnv):
         have_prev = self.prev_dist >= 0.0
         approach = torch.where(have_prev, self.prev_dist - dist, torch.zeros_like(dist))
         self.prev_dist = dist.detach()
+        z_axis = torch.zeros((self.num_envs, 3), device=self.device)
+        z_axis[:, 2] = 1.0
+        up = quat_apply(self.robot.data.root_quat_w.torch, z_axis)
+        upright = up[:, 2].clamp(min=0.0, max=1.0)
         rew = (
             self.cfg.rew_eat * ate.float()
             + self.cfg.rew_alive * (~self.collapsed).float()
             + self.cfg.rew_approach * approach
+            + self.cfg.rew_upright * upright
             + self.cfg.rew_dead * newly_dead.float()
         )
         self.extras.setdefault("log", {})

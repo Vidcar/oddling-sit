@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-START_ENERGY = 36.0
+START_ENERGY = 72.0
 DRAIN = 0.02
-EAT_RADIUS = 0.45
-EAT_ENERGY = 8.0
-FOOD_HOME = (0.9, 0.0, 0.12)
-FOOD_JITTER_X = 0.4
-FOOD_JITTER_Y = 0.3
+EAT_RADIUS = 0.50
+EAT_ENERGY = 12.0
+FOOD_HOME = (0.55, 0.0, 0.12)
+FOOD_JITTER_X = 0.25
+FOOD_JITTER_Y = 0.20
 COLLAPSE_STEPS = 24
 
 
