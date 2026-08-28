@@ -1,0 +1,111 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.2.0"
+    }
+    defaultPrim = "oddling"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\tmpxcmp6asb\\oddling.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\mjcf_import_body_4eup8lfo\\usdex_body\\oddling.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\mjcf_import_body_4eup8lfo\\temp_body\\body.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "oddling"
+{
+    over "Geometry"
+    {
+        over "torso"
+        {
+            over "fl_hip"
+            {
+                over "fl_shin"
+                {
+                    over "fl_knee" (
+                        prepend apiSchemas = ["PhysxJointAPI"]
+                    )
+                    {
+                        float physxJoint:armature = 0.01
+                    }
+                }
+
+                over "fl_hip" (
+                    prepend apiSchemas = ["PhysxJointAPI"]
+                )
+                {
+                    float physxJoint:armature = 0.01
+                }
+            }
+
+            over "fr_hip"
+            {
+                over "fr_shin"
+                {
+                    over "fr_knee" (
+                        prepend apiSchemas = ["PhysxJointAPI"]
+                    )
+                    {
+                        float physxJoint:armature = 0.01
+                    }
+                }
+
+                over "fr_hip" (
+                    prepend apiSchemas = ["PhysxJointAPI"]
+                )
+                {
+                    float physxJoint:armature = 0.01
+                }
+            }
+
+            over "hl_hip"
+            {
+                over "hl_shin"
+                {
+                    over "hl_knee" (
+                        prepend apiSchemas = ["PhysxJointAPI"]
+                    )
+                    {
+                        float physxJoint:armature = 0.01
+                    }
+                }
+
+                over "hl_hip" (
+                    prepend apiSchemas = ["PhysxJointAPI"]
+                )
+                {
+                    float physxJoint:armature = 0.01
+                }
+            }
+
+            over "hr_hip"
+            {
+                over "hr_shin"
+                {
+                    over "hr_knee" (
+                        prepend apiSchemas = ["PhysxJointAPI"]
+                    )
+                    {
+                        float physxJoint:armature = 0.01
+                    }
+                }
+
+                over "hr_hip" (
+                    prepend apiSchemas = ["PhysxJointAPI"]
+                )
+                {
+                    float physxJoint:armature = 0.01
+                }
+            }
+        }
+    }
+}
+

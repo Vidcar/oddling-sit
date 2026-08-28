@@ -1,0 +1,285 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.2.0"
+    }
+    defaultPrim = "oddling"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\tmpxcmp6asb\\oddling.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\mjcf_import_body_4eup8lfo\\usdex_body\\oddling.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\mjcf_import_body_4eup8lfo\\temp_body\\body.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "oddling"
+{
+    over "Geometry"
+    {
+        over "torso"
+        {
+            over "torso" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+            }
+
+            over "mouth"
+            {
+                over "mouth_bulb" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                }
+
+                over "PhysicsFixedJoint"
+                {
+                }
+            }
+
+            over "fl_hip"
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                }
+
+                over "fl_shin"
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["MjcCollisionAPI"]
+                    )
+                    {
+                    }
+
+                    over "fl_knee" (
+                        delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                        prepend apiSchemas = ["MjcJointAPI"]
+                    )
+                    {
+                        uniform double mjc:armature = 0.01
+                        uniform double mjc:damping = 0.5
+                    }
+                }
+
+                over "fl_hip" (
+                    delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    prepend apiSchemas = ["MjcJointAPI"]
+                )
+                {
+                    uniform double mjc:armature = 0.01
+                    uniform double mjc:damping = 0.5
+                }
+            }
+
+            over "fr_hip"
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                }
+
+                over "fr_shin"
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["MjcCollisionAPI"]
+                    )
+                    {
+                    }
+
+                    over "fr_knee" (
+                        delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                        prepend apiSchemas = ["MjcJointAPI"]
+                    )
+                    {
+                        uniform double mjc:armature = 0.01
+                        uniform double mjc:damping = 0.5
+                    }
+                }
+
+                over "fr_hip" (
+                    delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    prepend apiSchemas = ["MjcJointAPI"]
+                )
+                {
+                    uniform double mjc:armature = 0.01
+                    uniform double mjc:damping = 0.5
+                }
+            }
+
+            over "hl_hip"
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                }
+
+                over "hl_shin"
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["MjcCollisionAPI"]
+                    )
+                    {
+                    }
+
+                    over "hl_knee" (
+                        delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                        prepend apiSchemas = ["MjcJointAPI"]
+                    )
+                    {
+                        uniform double mjc:armature = 0.01
+                        uniform double mjc:damping = 0.5
+                    }
+                }
+
+                over "hl_hip" (
+                    delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    prepend apiSchemas = ["MjcJointAPI"]
+                )
+                {
+                    uniform double mjc:armature = 0.01
+                    uniform double mjc:damping = 0.5
+                }
+            }
+
+            over "hr_hip"
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                }
+
+                over "hr_shin"
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["MjcCollisionAPI"]
+                    )
+                    {
+                    }
+
+                    over "hr_knee" (
+                        delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                        prepend apiSchemas = ["MjcJointAPI"]
+                    )
+                    {
+                        uniform double mjc:armature = 0.01
+                        uniform double mjc:damping = 0.5
+                    }
+                }
+
+                over "hr_hip" (
+                    delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    prepend apiSchemas = ["MjcJointAPI"]
+                )
+                {
+                    uniform double mjc:armature = 0.01
+                    uniform double mjc:damping = 0.5
+                }
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        over "PhysicsMaterial" (
+            prepend apiSchemas = ["MjcMaterialAPI"]
+        )
+        {
+            uniform double mjc:rollingfriction = 0.5
+            uniform double mjc:torsionalfriction = 0.5
+        }
+
+        def MjcActuator "fl_hip"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/fl_hip/fl_hip>
+        }
+
+        def MjcActuator "fl_knee"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/fl_hip/fl_shin/fl_knee>
+        }
+
+        def MjcActuator "fr_hip"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/fr_hip/fr_hip>
+        }
+
+        def MjcActuator "fr_knee"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/fr_hip/fr_shin/fr_knee>
+        }
+
+        def MjcActuator "hl_hip"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/hl_hip/hl_hip>
+        }
+
+        def MjcActuator "hl_knee"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/hl_hip/hl_shin/hl_knee>
+        }
+
+        def MjcActuator "hr_hip"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/hr_hip/hr_hip>
+        }
+
+        def MjcActuator "hr_knee"
+        {
+            uniform token mjc:ctrlLimited = "true"
+            uniform double mjc:ctrlRange:max = 1
+            uniform double mjc:ctrlRange:min = -1
+            uniform double[] mjc:gear = [8, 0, 0, 0, 0, 0]
+            custom rel mjc:target
+            prepend rel mjc:target = </oddling/Geometry/torso/hr_hip/hr_shin/hr_knee>
+        }
+    }
+}
+

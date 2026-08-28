@@ -9,12 +9,12 @@ from isaaclab.assets import ArticulationCfg, RigidObjectCfg
 import oddling
 from oddling.live import FOOD_HOME
 
-XML = Path(oddling.__file__).with_name("body.xml")
+USD = Path(__file__).resolve().parents[4] / "assets" / "body" / "body.usda"
 
 CRITTER_CFG = ArticulationCfg(
     prim_path="{ENV_REGEX_NS}/Robot",
-    spawn=sim_utils.MjcfFileCfg(
-        asset_path=str(XML),
+    spawn=sim_utils.UsdFileCfg(
+        usd_path=str(USD),
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
             max_depenetration_velocity=10.0,
@@ -27,6 +27,7 @@ CRITTER_CFG = ArticulationCfg(
             sleep_threshold=0.005,
             stabilization_threshold=0.001,
         ),
+        copy_from_source=False,
     ),
     init_state=ArticulationCfg.InitialStateCfg(
         pos=(0.0, 0.0, 0.32),

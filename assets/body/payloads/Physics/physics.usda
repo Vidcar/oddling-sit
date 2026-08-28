@@ -1,0 +1,327 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.2.0"
+    }
+    defaultPrim = "oddling"
+    doc = """Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\tmpxcmp6asb\\oddling.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\mjcf_import_body_4eup8lfo\\usdex_body\\oddling.usdc
+
+
+Generated from Composed Stage of root layer C:\\Users\\Dave_\\AppData\\Local\\Temp\\mjcf_import_body_4eup8lfo\\temp_body\\body.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "oddling"
+{
+    over "Geometry"
+    {
+        over "torso" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsArticulationRootAPI", "NewtonArticulationRootAPI"]
+        )
+        {
+            bool newton:selfCollisionEnabled = 0
+
+            over "torso" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float newton:contactGap = 0
+                float physics:density = 1000
+                float physics:mass = 2
+            }
+
+            over "mouth" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+            )
+            {
+                over "mouth_bulb" (
+                    prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                )
+                {
+                    float newton:contactGap = 0
+                    float physics:density = 1000
+                    float physics:mass = 0.02
+                }
+
+                def PhysicsFixedJoint "PhysicsFixedJoint"
+                {
+                    custom rel physics:body0
+                    prepend rel physics:body0 = </oddling/Geometry/torso>
+                    custom rel physics:body1
+                    prepend rel physics:body1 = </oddling/Geometry/torso/mouth>
+                    point3f physics:localPos0 = (0.22, 0, 0)
+                    point3f physics:localPos1 = (0, 0, 0)
+                    quatf physics:localRot0 = (1, 0, 0, 0)
+                    quatf physics:localRot1 = (1, 0, 0, 0)
+                }
+            }
+
+            over "fl_hip" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+            )
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                )
+                {
+                    float newton:contactGap = 0
+                    float physics:density = 1000
+                    float physics:mass = 0.25
+                }
+
+                over "fl_shin" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+                )
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        float newton:contactGap = 0
+                        float physics:density = 1000
+                        float physics:mass = 0.15
+                    }
+
+                    def PhysicsRevoluteJoint "fl_knee" (
+                        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    )
+                    {
+                        uniform token physics:axis = "Y"
+                        custom rel physics:body0
+                        prepend rel physics:body0 = </oddling/Geometry/torso/fl_hip>
+                        custom rel physics:body1
+                        prepend rel physics:body1 = </oddling/Geometry/torso/fl_hip/fl_shin>
+                        point3f physics:localPos0 = (0, 0, -0.14)
+                        point3f physics:localPos1 = (0, 0, 0)
+                        quatf physics:localRot0 = (1, 0, 0, 0)
+                        quatf physics:localRot1 = (1, 0, 0, 0)
+                        float physics:lowerLimit = -80.21409
+                        float physics:upperLimit = 11.459156
+                    }
+                }
+
+                def PhysicsRevoluteJoint "fl_hip" (
+                    prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                )
+                {
+                    uniform token physics:axis = "Y"
+                    custom rel physics:body0
+                    prepend rel physics:body0 = </oddling/Geometry/torso>
+                    custom rel physics:body1
+                    prepend rel physics:body1 = </oddling/Geometry/torso/fl_hip>
+                    point3f physics:localPos0 = (0.14, 0.12, -0.04)
+                    point3f physics:localPos1 = (0, 0, 0)
+                    quatf physics:localRot0 = (1, 0, 0, 0)
+                    quatf physics:localRot1 = (1, 0, 0, 0)
+                    float physics:lowerLimit = -51.5662
+                    float physics:upperLimit = 51.5662
+                }
+            }
+
+            over "fr_hip" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+            )
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                )
+                {
+                    float newton:contactGap = 0
+                    float physics:density = 1000
+                    float physics:mass = 0.25
+                }
+
+                over "fr_shin" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+                )
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        float newton:contactGap = 0
+                        float physics:density = 1000
+                        float physics:mass = 0.15
+                    }
+
+                    def PhysicsRevoluteJoint "fr_knee" (
+                        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    )
+                    {
+                        uniform token physics:axis = "Y"
+                        custom rel physics:body0
+                        prepend rel physics:body0 = </oddling/Geometry/torso/fr_hip>
+                        custom rel physics:body1
+                        prepend rel physics:body1 = </oddling/Geometry/torso/fr_hip/fr_shin>
+                        point3f physics:localPos0 = (0, 0, -0.14)
+                        point3f physics:localPos1 = (0, 0, 0)
+                        quatf physics:localRot0 = (1, 0, 0, 0)
+                        quatf physics:localRot1 = (1, 0, 0, 0)
+                        float physics:lowerLimit = -80.21409
+                        float physics:upperLimit = 11.459156
+                    }
+                }
+
+                def PhysicsRevoluteJoint "fr_hip" (
+                    prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                )
+                {
+                    uniform token physics:axis = "Y"
+                    custom rel physics:body0
+                    prepend rel physics:body0 = </oddling/Geometry/torso>
+                    custom rel physics:body1
+                    prepend rel physics:body1 = </oddling/Geometry/torso/fr_hip>
+                    point3f physics:localPos0 = (0.14, -0.12, -0.04)
+                    point3f physics:localPos1 = (0, 0, 0)
+                    quatf physics:localRot0 = (1, 0, 0, 0)
+                    quatf physics:localRot1 = (1, 0, 0, 0)
+                    float physics:lowerLimit = -51.5662
+                    float physics:upperLimit = 51.5662
+                }
+            }
+
+            over "hl_hip" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+            )
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                )
+                {
+                    float newton:contactGap = 0
+                    float physics:density = 1000
+                    float physics:mass = 0.25
+                }
+
+                over "hl_shin" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+                )
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        float newton:contactGap = 0
+                        float physics:density = 1000
+                        float physics:mass = 0.15
+                    }
+
+                    def PhysicsRevoluteJoint "hl_knee" (
+                        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    )
+                    {
+                        uniform token physics:axis = "Y"
+                        custom rel physics:body0
+                        prepend rel physics:body0 = </oddling/Geometry/torso/hl_hip>
+                        custom rel physics:body1
+                        prepend rel physics:body1 = </oddling/Geometry/torso/hl_hip/hl_shin>
+                        point3f physics:localPos0 = (0, 0, -0.14)
+                        point3f physics:localPos1 = (0, 0, 0)
+                        quatf physics:localRot0 = (1, 0, 0, 0)
+                        quatf physics:localRot1 = (1, 0, 0, 0)
+                        float physics:lowerLimit = -80.21409
+                        float physics:upperLimit = 11.459156
+                    }
+                }
+
+                def PhysicsRevoluteJoint "hl_hip" (
+                    prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                )
+                {
+                    uniform token physics:axis = "Y"
+                    custom rel physics:body0
+                    prepend rel physics:body0 = </oddling/Geometry/torso>
+                    custom rel physics:body1
+                    prepend rel physics:body1 = </oddling/Geometry/torso/hl_hip>
+                    point3f physics:localPos0 = (-0.14, 0.12, -0.04)
+                    point3f physics:localPos1 = (0, 0, 0)
+                    quatf physics:localRot0 = (1, 0, 0, 0)
+                    quatf physics:localRot1 = (1, 0, 0, 0)
+                    float physics:lowerLimit = -51.5662
+                    float physics:upperLimit = 51.5662
+                }
+            }
+
+            over "hr_hip" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+            )
+            {
+                over "Capsule" (
+                    prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                )
+                {
+                    float newton:contactGap = 0
+                    float physics:density = 1000
+                    float physics:mass = 0.25
+                }
+
+                over "hr_shin" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+                )
+                {
+                    over "Capsule" (
+                        prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        float newton:contactGap = 0
+                        float physics:density = 1000
+                        float physics:mass = 0.15
+                    }
+
+                    def PhysicsRevoluteJoint "hr_knee" (
+                        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    )
+                    {
+                        uniform token physics:axis = "Y"
+                        custom rel physics:body0
+                        prepend rel physics:body0 = </oddling/Geometry/torso/hr_hip>
+                        custom rel physics:body1
+                        prepend rel physics:body1 = </oddling/Geometry/torso/hr_hip/hr_shin>
+                        point3f physics:localPos0 = (0, 0, -0.14)
+                        point3f physics:localPos1 = (0, 0, 0)
+                        quatf physics:localRot0 = (1, 0, 0, 0)
+                        quatf physics:localRot1 = (1, 0, 0, 0)
+                        float physics:lowerLimit = -80.21409
+                        float physics:upperLimit = 11.459156
+                    }
+                }
+
+                def PhysicsRevoluteJoint "hr_hip" (
+                    prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                )
+                {
+                    uniform token physics:axis = "Y"
+                    custom rel physics:body0
+                    prepend rel physics:body0 = </oddling/Geometry/torso>
+                    custom rel physics:body1
+                    prepend rel physics:body1 = </oddling/Geometry/torso/hr_hip>
+                    point3f physics:localPos0 = (-0.14, -0.12, -0.04)
+                    point3f physics:localPos1 = (0, 0, 0)
+                    quatf physics:localRot0 = (1, 0, 0, 0)
+                    quatf physics:localRot1 = (1, 0, 0, 0)
+                    float physics:lowerLimit = -51.5662
+                    float physics:upperLimit = 51.5662
+                }
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        over "PhysicsMaterial" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "NewtonMaterialAPI"]
+        )
+        {
+            float newton:rollingFriction = 0.5
+            float newton:torsionalFriction = 0.5
+            float physics:dynamicFriction = 1
+        }
+    }
+}
+
