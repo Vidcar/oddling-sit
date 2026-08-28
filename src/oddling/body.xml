@@ -1,0 +1,66 @@
+<mujoco model="oddling">
+  <compiler angle="radian" inertiafromgeom="true"/>
+  <option timestep="0.01" gravity="0 0 -9.81" iterations="50" solver="Newton"/>
+  <default>
+    <joint limited="true" damping="0.5" armature="0.01" stiffness="0.0"/>
+    <geom friction="1.0 0.5 0.5" rgba="0.42 0.55 0.28 1" condim="3"/>
+    <motor ctrlrange="-1 1" ctrllimited="true"/>
+  </default>
+  <worldbody>
+    <light name="sun" pos="2 2 6" dir="-0.3 -0.3 -1" diffuse="1 0.95 0.85"/>
+    <geom name="floor" type="plane" size="12 12 0.1" rgba="0.18 0.35 0.27 1" condim="3"/>
+    <body name="torso" pos="0 0 0.42">
+      <freejoint name="root"/>
+      <geom name="torso" type="box" size="0.18 0.11 0.07" mass="2.0"/>
+      <site name="mouth" pos="0.22 0 0" size="0.03" rgba="0.82 0.22 0.18 1"/>
+      <body name="fl_hip" pos="0.14 0.12 -0.04">
+        <joint name="fl_hip" type="hinge" axis="0 1 0" range="-0.9 0.9"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.035" mass="0.25"/>
+        <body name="fl_shin" pos="0 0 -0.14">
+          <joint name="fl_knee" type="hinge" axis="0 1 0" range="-1.4 0.2"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.03" mass="0.15"/>
+        </body>
+      </body>
+      <body name="fr_hip" pos="0.14 -0.12 -0.04">
+        <joint name="fr_hip" type="hinge" axis="0 1 0" range="-0.9 0.9"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.035" mass="0.25"/>
+        <body name="fr_shin" pos="0 0 -0.14">
+          <joint name="fr_knee" type="hinge" axis="0 1 0" range="-1.4 0.2"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.03" mass="0.15"/>
+        </body>
+      </body>
+      <body name="hl_hip" pos="-0.14 0.12 -0.04">
+        <joint name="hl_hip" type="hinge" axis="0 1 0" range="-0.9 0.9"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.035" mass="0.25"/>
+        <body name="hl_shin" pos="0 0 -0.14">
+          <joint name="hl_knee" type="hinge" axis="0 1 0" range="-1.4 0.2"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.03" mass="0.15"/>
+        </body>
+      </body>
+      <body name="hr_hip" pos="-0.14 -0.12 -0.04">
+        <joint name="hr_hip" type="hinge" axis="0 1 0" range="-0.9 0.9"/>
+        <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.035" mass="0.25"/>
+        <body name="hr_shin" pos="0 0 -0.14">
+          <joint name="hr_knee" type="hinge" axis="0 1 0" range="-1.4 0.2"/>
+          <geom type="capsule" fromto="0 0 0 0 0 -0.14" size="0.03" mass="0.15"/>
+        </body>
+      </body>
+    </body>
+    <body name="food" mocap="true" pos="2.2 0 0.12">
+      <geom name="food" type="sphere" size="0.12" rgba="0.82 0.22 0.18 1" contype="0" conaffinity="0"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="fl_hip" joint="fl_hip" gear="8"/>
+    <motor name="fl_knee" joint="fl_knee" gear="8"/>
+    <motor name="fr_hip" joint="fr_hip" gear="8"/>
+    <motor name="fr_knee" joint="fr_knee" gear="8"/>
+    <motor name="hl_hip" joint="hl_hip" gear="8"/>
+    <motor name="hl_knee" joint="hl_knee" gear="8"/>
+    <motor name="hr_hip" joint="hr_hip" gear="8"/>
+    <motor name="hr_knee" joint="hr_knee" gear="8"/>
+  </actuator>
+  <sensor>
+    <subtreelinvel name="torso_vel" body="torso"/>
+  </sensor>
+</mujoco>
