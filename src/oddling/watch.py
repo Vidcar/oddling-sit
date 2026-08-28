@@ -5,31 +5,33 @@ import subprocess
 import sys
 from pathlib import Path
 
-from oddling.lab import BAT, PLAY_PY, RANDOM_PY, TASK, TRAIN_PY, USER_TRAINED, trained_checkpoint
+from oddling.lab import BAT, USER_TRAINED, trained_checkpoint
+
+ROOT = Path(__file__).resolve().parents[2]
+RUN_LIVE = ROOT / "scripts" / "run_live.py"
+TRAIN_LIVE = ROOT / "scripts" / "train_live.py"
 
 
 def _run(script: Path, extra: list[str]) -> int:
     if not BAT.is_file():
         print(f"Isaac Lab not found at {BAT}. Set ISAACLAB_PATH.", file=sys.stderr)
         return 2
-    cmd = [str(BAT), "-p", str(script), "--task", TASK, *extra]
+    cmd = [str(BAT), "-p", str(script), *extra]
     print(" ".join(cmd))
     return subprocess.call(cmd)
 
 
 def cmd_watch(kind: str) -> int:
-    if kind == "stupid":
-        return _run(RANDOM_PY, ["--num_envs", "1"])
-    ckpt = trained_checkpoint()
-    if ckpt is None:
+    extra = ["--policy", kind, "--num_envs", "1"]
+    if kind == "trained" and trained_checkpoint() is None:
         print("No trained body yet. Run: oddling train", file=sys.stderr)
         return 2
-    return _run(PLAY_PY, ["--num_envs", "1", "--checkpoint", str(ckpt)])
+    return _run(RUN_LIVE, extra)
 
 
 def cmd_train() -> int:
     USER_TRAINED.mkdir(parents=True, exist_ok=True)
-    rc = _run(TRAIN_PY, ["--headless", "--max_iterations", "1000"])
+    rc = _run(TRAIN_LIVE, ["--headless", "--max_iterations", "1000"])
     if rc != 0:
         return rc
     ckpt = trained_checkpoint()

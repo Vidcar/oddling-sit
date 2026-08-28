@@ -25,8 +25,8 @@ class LivePhysicsCfg(PresetCfg):
     physx: PhysxAutoCfg = PhysxAutoCfg(isaacsim_physx=isaacsim_physx, ovphysx=ovphysx)
     newton_mjwarp: NewtonCfg = NewtonCfg(
         solver_cfg=MJWarpSolverCfg(
-            njmax=45,
-            nconmax=25,
+            njmax=128,
+            nconmax=64,
             cone="pyramidal",
             integrator="implicitfast",
             impratio=1,

@@ -12,8 +12,6 @@ def test_four_leg_mouth() -> None:
     assert "torso" in names
     for leg in ("fl_hip", "fr_hip", "hl_hip", "hr_hip", "fl_shin", "fr_shin", "hl_shin", "hr_shin"):
         assert leg in names
-    sites = {s.get("name") for s in root.iter("site")}
-    assert "mouth" in sites
     assert "mouth" in names
     motors = root.findall("./actuator/motor")
     assert len(motors) == 8

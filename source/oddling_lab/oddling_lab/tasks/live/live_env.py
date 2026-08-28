@@ -34,7 +34,7 @@ class LiveEnv(DirectRLEnv):
         self.collapse_left = torch.zeros(n, dtype=torch.int32, device=device)
         self.food_pos = torch.zeros((n, 3), device=device)
         self.food_pos[:] = torch.tensor(self.cfg.food_home, device=device)
-        self._mouth_ids, _ = self.robot.find_bodies("mouth")
+        self._mouth_ids, _ = self.robot.find_bodies("mouth.*")
         if len(self._mouth_ids) == 0:
             self._mouth_ids, _ = self.robot.find_bodies("torso")
 
