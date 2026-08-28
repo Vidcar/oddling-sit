@@ -12,7 +12,7 @@ from isaaclab.envs import DirectRLEnv
 from isaaclab.sim.spawners.from_files import GroundPlaneCfg, spawn_ground_plane
 from isaaclab.utils.math import quat_apply
 
-from oddling.live import COLLAPSE_STEPS, DRAIN, EAT_ENERGY, EAT_LOCK, EAT_RADIUS, FOOD_CLEAR, START_ENERGY
+from oddling.live import DRAIN, EAT_ENERGY, EAT_LOCK, EAT_RADIUS, FOOD_CLEAR, START_ENERGY
 
 if TYPE_CHECKING:
     from oddling_lab.tasks.live.live_env_cfg import LiveEnvCfg
@@ -30,12 +30,13 @@ class LiveEnv(DirectRLEnv):
         device = self.device
         self.energy = torch.full((n,), START_ENERGY, device=device)
         self.eats = torch.zeros(n, dtype=torch.int32, device=device)
-        self.collapsed = torch.zeros(n, dtype=torch.bool, device=device)
-        self.collapse_left = torch.zeros(n, dtype=torch.int32, device=device)
         self.food_pos = torch.zeros((n, 3), device=device)
         self.food_pos[:] = torch.tensor(self.cfg.food_home, device=device)
         self.prev_dist = torch.full((n,), -1.0, device=device)
         self.eat_lock = torch.zeros(n, dtype=torch.int32, device=device)
+        self.starved = torch.zeros(n, dtype=torch.bool, device=device)
+        self.ate = torch.zeros(n, dtype=torch.bool, device=device)
+        self.approach = torch.zeros(n, device=device)
         self._mouth_ids, _ = self.robot.find_bodies("mouth.*")
         if len(self._mouth_ids) == 0:
             self._mouth_ids, _ = self.robot.find_bodies("torso")
@@ -62,7 +63,6 @@ class LiveEnv(DirectRLEnv):
     def _pre_physics_step(self, actions: torch.Tensor) -> None:
         self.actions = self.action_scale * actions.clone()
         self.actions = self.actions.clamp(-1.0, 1.0)
-        self.actions[self.collapsed] = 0.0
 
     def _apply_action(self) -> None:
         self.robot.set_joint_effort_target_index(target=self.actions)
@@ -103,52 +103,43 @@ class LiveEnv(DirectRLEnv):
         obs = torch.cat((jp, jv, up, rel, e), dim=-1)
         return {"policy": obs}
 
-    def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]:
-        time_out = self.episode_length_buf >= self.max_episode_length
-        died = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
-        return died, time_out
-
-    def _get_rewards(self) -> torch.Tensor:
+    def _tick_live(self) -> None:
         mouth = self._mouth_world()
         food_w = self.food_pos + self.scene.env_origins
         dist = torch.linalg.norm(mouth - food_w, dim=-1)
-        ate = (dist < EAT_RADIUS) & (~self.collapsed) & (self.eat_lock <= 0)
+        ate = (dist < EAT_RADIUS) & (self.eat_lock <= 0)
         self.eat_lock = torch.where(self.eat_lock > 0, self.eat_lock - 1, self.eat_lock)
         self.eat_lock = torch.where(ate, torch.full_like(self.eat_lock, EAT_LOCK), self.eat_lock)
-        finishing = (self.collapsed) & (self.collapse_left <= 1)
-
-        self.energy = torch.where(self.collapsed, self.energy, self.energy - DRAIN + ate.float() * EAT_ENERGY)
+        self.energy = self.energy - DRAIN + ate.float() * EAT_ENERGY
         self.eats = self.eats + ate.to(torch.int32)
         if bool(ate.any()):
             self._jitter_food(ate.nonzero(as_tuple=False).squeeze(-1))
             self._write_food(ate.nonzero(as_tuple=False).squeeze(-1))
-
-        newly_dead = (~self.collapsed) & (self.energy <= 0.0)
-        self.collapsed = self.collapsed | newly_dead
-        self.energy = torch.where(newly_dead, torch.zeros_like(self.energy), self.energy)
-        self.collapse_left = torch.where(
-            newly_dead,
-            torch.full_like(self.collapse_left, COLLAPSE_STEPS),
-            torch.where(self.collapsed, self.collapse_left - 1, self.collapse_left),
-        )
-
-        if bool(finishing.any()):
-            ids = finishing.nonzero(as_tuple=False).squeeze(-1)
-            self._reset_life(ids)
-
+            dist = torch.linalg.norm(self._mouth_world() - (self.food_pos + self.scene.env_origins), dim=-1)
+        self.starved = self.energy <= 0.0
+        self.energy = torch.where(self.starved, torch.zeros_like(self.energy), self.energy)
         have_prev = self.prev_dist >= 0.0
-        approach = torch.where(have_prev, self.prev_dist - dist, torch.zeros_like(dist))
+        self.approach = torch.where(have_prev, self.prev_dist - dist, torch.zeros_like(dist))
         self.prev_dist = dist.detach()
+        self.ate = ate
+        self.dist = dist
+
+    def _get_dones(self) -> tuple[torch.Tensor, torch.Tensor]:
+        self._tick_live()
+        time_out = self.episode_length_buf >= self.max_episode_length
+        return self.starved, time_out
+
+    def _get_rewards(self) -> torch.Tensor:
         z_axis = torch.zeros((self.num_envs, 3), device=self.device)
         z_axis[:, 2] = 1.0
         up = quat_apply(self.robot.data.root_quat_w.torch, z_axis)
         upright = up[:, 2].clamp(min=0.0, max=1.0)
         rew = (
-            self.cfg.rew_eat * ate.float()
-            + self.cfg.rew_alive * (~self.collapsed).float()
-            + self.cfg.rew_approach * approach
+            self.cfg.rew_eat * self.ate.float()
+            + self.cfg.rew_alive * (~self.starved).float()
+            + self.cfg.rew_approach * self.approach
             + self.cfg.rew_upright * upright
-            + self.cfg.rew_dead * newly_dead.float()
+            + self.cfg.rew_dead * self.starved.float()
         )
         self.extras.setdefault("log", {})
         self.extras["log"]["eats_mean"] = self.eats.float().mean().item()
@@ -158,8 +149,6 @@ class LiveEnv(DirectRLEnv):
     def _reset_life(self, env_ids: torch.Tensor) -> None:
         self.energy[env_ids] = START_ENERGY
         self.eats[env_ids] = 0
-        self.collapsed[env_ids] = False
-        self.collapse_left[env_ids] = 0
         self.prev_dist[env_ids] = -1.0
         self.eat_lock[env_ids] = 0
         home = torch.tensor(self.cfg.food_home, device=self.device)
