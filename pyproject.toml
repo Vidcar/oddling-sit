@@ -1,25 +1,16 @@
 [project]
 name = "oddling"
 version = "0.1.0"
-description = "Oddling GPU-sim sitting: watch a 3D body invent how to live"
+description = "Oddling: watch a four-leg critter try to live"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-  "mujoco>=3.2.0",
-  "mujoco-mjx>=3.2.0",
-  "jax>=0.4.30",
-  "flax>=0.10.0",
-  "optax>=0.2.0",
-  "numpy>=1.26",
-  "pygame>=2.6.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
-gpu = ["jax[cuda12]"]
 dev = ["pytest>=8.0"]
 
 [project.scripts]
-oddling = "oddling.sit:main"
+oddling = "oddling.watch:main"
 
 [build-system]
 requires = ["setuptools>=68"]
