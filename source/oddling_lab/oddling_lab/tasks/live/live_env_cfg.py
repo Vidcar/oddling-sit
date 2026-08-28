@@ -58,11 +58,11 @@ class LiveEnvCfg(DirectRLEnvCfg):
     food_jitter_x: float = 0.35
     food_jitter_y: float = 0.35
 
-    rew_eat: float = 20.0
-    rew_alive: float = 0.01
-    rew_approach: float = 1.5
-    rew_upright: float = 0.05
-    rew_dead: float = -1.0
+    rew_eat: float = 25.0
+    rew_alive: float = 0.0
+    rew_approach: float = 2.5
+    rew_upright: float = 0.005
+    rew_dead: float = -2.0
 
     def __post_init__(self):
         self.sim.default_visualizer_cfg = VisualizerCfg(eye=(4.0, -2.5, 1.8), lookat=(0.4, 0.0, 0.2))
