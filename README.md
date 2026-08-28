@@ -1,30 +1,30 @@
 # Oddling
 
-Sit with a 3D body that starts stupid. Turbo. Watch the latest best. Read the chart.
+Watch a four-leg critter try to live. You never move its joints.
 
-The world that learns is the world you watch. You never move the joints.
+This is the body-can-live check. Not the Oddling game.
 
-## Sit
+## Watch
 
-A local NVIDIA GPU is required for a fast sitting. A slower machine still shows the chart.
+Isaac Lab at `D:\codeprojects\IsaacLab` is required (its `env_isaaclab` venv).
 
 ```powershell
 cd D:\codeprojects\oddling-sit
-python -m venv .venv
-.\.venv\Scripts\pip install -e ".[dev]"
-.\.venv\Scripts\pip install -U "jax[cuda12]"
-.\.venv\Scripts\oddling
+D:\codeprojects\IsaacLab\env_isaaclab\Scripts\pip install -e ".[dev]"
+oddling watch stupid
+oddling watch trained
 ```
 
-You land in one field. Food is in front. Learning is already going.
+- `watch stupid` — untrained body. It mostly misses food and collapses. The run continues.
+- `watch trained` — same body after it learned to live. It should get food more than once. Ugly is allowed.
+- Food starts in front. Mouth reaches it → eat. Food comes back nearby. Energy always drains. Eat or die.
+- Close and come back: both watchings are still there after a train.
 
-- Space pause
-- `[` slower / `]` turbo
-- Left-click drops food
-- Survive / Move / Upright sliders; Reset lesson
-- Chart is progress over time. It may plateau.
+```powershell
+oddling train
+```
 
-No Train. No overnight job. No Classroom.
+That takes a while. Then `watch trained` uses the saved body.
 
 ## Check
 
@@ -34,4 +34,4 @@ No Train. No overnight job. No Classroom.
 
 ## Envelope
 
-Local Windows. One player. Capable GPU. Nothing to share yet.
+Local Windows. One body. Flat field. Eat or die.

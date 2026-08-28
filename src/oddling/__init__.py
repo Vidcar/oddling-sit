@@ -1,3 +1,3 @@
-"""Oddling GPU-sim sitting."""
+"""Oddling: watch a body try to live."""
 
 __version__ = "0.1.0"
